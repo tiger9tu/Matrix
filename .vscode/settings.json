@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "complex": "c",
+        "string_view": "c"
+    },
+    "editor.formatOnSave": true,
+    "clang-format.executable": "/usr/bin/clang-format"
+}
