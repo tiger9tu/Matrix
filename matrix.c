@@ -110,33 +110,6 @@ void freeMatrix(matrix *m) {
 }
 
 /*===========================================================================
- * writeMatrix
- * Write a matrix to a file.
- *=========================================================================*/
-void writeMatrix(matrix *m, char *filename) {
-  FILE *fh;
-  int i, j;
-  double *ptr = m->data;
-
-  if ((fh = fopen(filename, "w")) == NULL) {
-    fprintf(stderr, "Error: Cannot open %s\n", filename);
-    exit(1);
-  }
-
-  fprintf(fh, "%d %d\n", m->width, m->height);
-
-  for (i = 0; i < m->height; i++) {
-    for (j = 0; j < m->width; j++) {
-      fprintf(fh, " %2.5f", *(ptr++));
-    }
-    fprintf(fh, "\n");
-  }
-
-  close(fh);
-  return;
-}
-
-/*===========================================================================
  * printMatrix
  * Prints a matrix. Great for debugging.
  *=========================================================================*/

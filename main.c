@@ -1,7 +1,10 @@
 #include "matrix.h"
 #include "qr.h"
-#include <gsl/gsl_matrix.h>
-#include <gsl/gsl_permutation.h>
+
+#include <gsl/gsl_linalg.h>
+#include <gsl/gsl_matrix.h>      // required by problem set
+#include <gsl/gsl_permutation.h> // required by problem set
+
 #include <math.h>
 #include <stdio.h>
 #include <time.h>
@@ -11,7 +14,7 @@ void generateRandomUpperTriangularSquareMatrix(int n, matrix **r,
                                                gsl_matrix **gsl_r) {
   *r = makeMatrix(n, n);
   *gsl_r = gsl_matrix_alloc(n, n);
-  printf("gslr size = %d\n", (*gsl_r)->size2);
+  printf("gslr size = %ld\n", (*gsl_r)->size2);
   // Use the current time as the seed for the random number generator
   srand(time(NULL));
 
@@ -181,28 +184,6 @@ void solve_linear_system(const gsl_matrix *A, const gsl_vector *b,
   gsl_permutation_free(perm);
 }
 
-void usinggslSolveNormalEqu(matrix *A, matrix *b) {
-  gsl_matrix *gslA = getGslFromNormal(A);
-  gsl_vector *gsl_b = gsl_vector_alloc(b->height);
-  for (size_t i = 0; i < b->height; i++) {
-    gsl_vector_set(gsl_b, i, b->data[i]);
-  }
-
-  gsl_matrix *gslATA = gsl_matrix_alloc(A->width, A->width);
-  gsl_blas_dgemm(CblasTrans, CblasNoTrans, 1.0, gslA, gslA, 0.0, gslATA);
-  gsl_matrix *gslATb = gsl_vector_alloc(A->width);
-  gsl_blas_dgemv(CblasTrans, 1.0, gslA, gsl_b, 0.0, gslATb);
-
-  gsl_vector *x = gsl_vector_alloc(gslA->size2);
-
-  // solve ATAx = ATb:
-  solve_linear_system(gslATA, gslATb, x);
-
-  for (size_t i = 0; i < x->size; ++i) {
-    printf("v[%d] = %lf\n", i, gsl_vector_get(x, i));
-  }
-}
-
 matrix *generateTestMatrix() {
   matrix *a = makeMatrix(3, 4);
   for (int i = 0; i < a->height; i++)
@@ -212,6 +193,8 @@ matrix *generateTestMatrix() {
 }
 
 void a_b_() {
+  printf(
+      "\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\(a,b)\\\\\\\\\\\\\\\\\\\\\\\\\\\\\n");
   matrix *a = generateTestMatrix();
   printf("The original matrix A:\n");
   printMatrix(a);
@@ -235,11 +218,13 @@ void a_b_() {
   printMatrix(houseHolderQ);
   printf("R: \n");
   printMatrix(houseHolderR);
+  printf("To verify, QR = \n");
+  printMatrix(multiplyMatrix(houseHolderQ, houseHolderR));
   printf("\n\n\n");
 }
 
 void c_() {
-
+  printf("\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\(c)\\\\\\\\\\\\\\\\\\\\\\\\\\\\\n");
   matrix *a = generateTestMatrix();
   houseHolderFactor *hhf = houseHolderQR(a);
   matrix *x = makeMatrix(1, 4);
@@ -269,10 +254,12 @@ void c_() {
   printf("implicit computation of QTy: \n");
   implilcitQTx(hhf, y);
   printMatrix(y);
+
+  printf("\n\n\n");
 }
 
 void d_() {
-
+  printf("\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\(d)\\\\\\\\\\\\\\\\\\\\\\\\\\\\\n");
   size_t tries = 1;
   FILE *file = fopen("output.txt", "w");
   for (int n = 1; n <= 15; n++) {
@@ -320,15 +307,6 @@ void d_() {
 
       // printf("R error of the Householder:\n");
       hhER += giveError(r, myr);
-      if (hhER > 0.5) {
-        printf("hhER too large, r = \n");
-        printMatrix(r);
-        printf("my r : \n");
-        printMatrix(myr);
-
-        printf("a : \n");
-        printMatrix(a);
-      }
 
       // error type 2
       hhEQ += giveError(q, myq);
@@ -373,10 +351,11 @@ void d_() {
             gsEQR / tries, gsEQQ / tries);
   }
 
-  // gsl_linalg_QR_decomp_r()
+  printf("\n\n\n");
 }
 
 void e_() {
+  printf("\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\(e)\\\\\\\\\\\\\\\\\\\\\\\\\\\\\n");
   int m = 100;
   int n = 15;
   matrix *A = generateVandMatrix(m, n);

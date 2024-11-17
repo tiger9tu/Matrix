@@ -2,6 +2,7 @@
 #include "matrix.h"
 #include <math.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 void house(matrix *v, double *beta) {
   /* v is initialized as x */

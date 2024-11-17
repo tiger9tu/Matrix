@@ -1,7 +1,8 @@
 {
     "files.associations": {
         "complex": "c",
-        "string_view": "c"
+        "string_view": "c",
+        "gsl_vector_double.h": "c"
     },
     "editor.formatOnSave": true,
     "clang-format.executable": "/usr/bin/clang-format"
